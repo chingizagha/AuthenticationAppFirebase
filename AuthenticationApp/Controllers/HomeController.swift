@@ -23,7 +23,16 @@ class HomeController: UIViewController {
         super.viewDidLoad()
         setupUI()
         
-        label.text = "Chingiz Agha\ncingiz167@gmail.com"
+        AuthService.shared.fetchUser { [weak self] user, error in
+            guard let self = self else {return}
+            if let error = error {
+                AlertManager.showFetchingUserError(on: self, error: error)
+                return
+            }
+            if let user = user {
+                label.text = "\(user.username)\n\(user.email)"
+            }
+        }
     }
     
     // MARK: - UI Setup
@@ -43,6 +52,16 @@ class HomeController: UIViewController {
     
     @objc
     private func didTapLogout(){
+        AuthService.shared.signOut { [weak self] error in
+            guard let self = self else {return}
+            if let error  = error {
+                AlertManager.showSignOutErrorAlert(on: self, error: error)
+                return
+            }
+            if let sceneDelegate = self.view.window?.windowScene?.delegate as? SceneDelegate {
+                sceneDelegate.checkAuthentication()
+            }
+        }
         
     }
 

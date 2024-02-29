@@ -26,6 +26,7 @@ class LoginController: UIViewController {
         signInButton.addTarget(self, action: #selector(didTapSignIn), for: .touchUpInside)
         newUserButton.addTarget(self, action: #selector(didTapNewUser), for: .touchUpInside)
         forgotPasswordButton.addTarget(self, action: #selector(didTapForgotPassword), for: .touchUpInside)
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -87,10 +88,39 @@ class LoginController: UIViewController {
     
     @objc
     func didTapSignIn(){
-        let vc = HomeController()
-        let nav = UINavigationController(rootViewController: vc)
-        nav.modalPresentationStyle = .fullScreen
-        present(nav, animated: true, completion: nil)
+        let loginRequest = LoginUserRequest(
+            email: emailField.text ?? "",
+            password: passwordField.text ?? ""
+        )
+        
+        //Email check
+        if !Validator.isValidEmail(for: loginRequest.email) {
+            AlertManager.showInvalidEmailAlert(on: self)
+            return
+        }
+        
+        //Password check
+        if !Validator.isValidPassword(for: loginRequest.password) {
+            AlertManager.showInvalidPasswordAlert(on: self)
+            return
+        }
+        
+        AuthService.shared.signIn(with: loginRequest) {[weak self] error in
+            guard let self = self else {return}
+            
+            
+            if let error = error {
+                AlertManager.showSignInErrorAlert(on: self, error: error)
+                return
+            } else{
+                AlertManager.showSignInErrorAlert(on: self)
+            }
+        }
+        
+        if let sceneDelegate = self.view.window?.windowScene?.delegate as? SceneDelegate {
+            sceneDelegate.checkAuthentication()
+        }
+        
     }
     
     @objc
