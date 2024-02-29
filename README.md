@@ -3,10 +3,9 @@
 Full featured universal (iOS, iPadOS) app.
 
 <div>
-    <img src="screenshots/autSS01.png" width="200" />
+    <img src="screenshots/autSS01.png" width="230" />
     <img src="screenshots/autSS02.png" width="200" />
     <img src="screenshots/autSS03.png" width="200" />
-    <img src="screenshots/autSS04.png" width="200" />
 </div>
 
 ## Overview
